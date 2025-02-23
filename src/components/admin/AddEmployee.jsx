@@ -11,6 +11,30 @@ const AddEmployee = () => {
   const submitHandler = (data) => {
     console.log(data);
   };
+
+  const validatorSchema = {
+    commonValidator: {
+      required: {
+        value: true,
+        message: "This field is required*",
+      },
+    },
+    phoneValidator: {
+      required: {
+        value: true,
+        message:"Phone number is required*"
+      },
+      maxLength: {
+        value: 10,
+        message: "Maximum 10 numbers allowed*",
+      },
+      minLength: {
+        value: 10,
+        message: "10 numbers is required*",
+      },
+    },
+  };
+
   return (
     <div className="min-h-full bg-zinc-700 flex justify-center overflow-hidden   text-white">
       <div className="bg-gray-600 bg-scroll my-5 p-4 rounded-xl h-3/4 w-3/4 mx-auto">
@@ -24,8 +48,9 @@ const AddEmployee = () => {
               type="text"
               className="bg-transparent border text-sm rounded-lg p-2 w-full placeholder:text-gray"
               placeholder="John Doe Nova"
-              {...register("fName")}
+              {...register("fName", validatorSchema.commonValidator)}
             />
+            <span className="text-red-600">{errors.fName?.message}</span>
           </div>
           <div className="mb-2">
             <label htmlFor="EmpId" className="block mb-2">
@@ -35,8 +60,9 @@ const AddEmployee = () => {
               type="text"
               className="bg-transparent border text-sm rounded-lg p-2 w-full placeholder:text-gray"
               placeholder="Emp2156Pft"
-              {...register("EmpId")}
+              {...register("EmpId", validatorSchema.commonValidator)}
             />
+            <span className="text-red-600">{errors.EmpId?.message}</span>
           </div>
           <div className="mb-2">
             <label htmlFor="EmailId" className="block mb-2">
@@ -46,8 +72,9 @@ const AddEmployee = () => {
               type="email"
               className="bg-transparent border text-sm rounded-lg p-2 w-full placeholder:text-gray"
               placeholder="example235@gmail.com"
-              {...register("EmailId")}
+              {...register("EmailId", validatorSchema.commonValidator)}
             />
+            <span className="text-red-600">{errors.EmailId?.message}</span>
           </div>
           <div className="mb-2">
             <label htmlFor="phoneNo" className="block mb-2">
@@ -57,8 +84,9 @@ const AddEmployee = () => {
               type="tel"
               className="bg-transparent border text-sm rounded-lg p-2 w-full placeholder:text-gray"
               placeholder="0123456789"
-              {...register("phoneNo")}
+              {...register("phoneNo", validatorSchema.phoneValidator)}
             />
+            <span className="text-red-600">{errors.phoneNo?.message}</span>
           </div>
           <div className="mb-2">
             <label htmlFor="DOB" className="block mb-2">
@@ -68,8 +96,9 @@ const AddEmployee = () => {
               type="date"
               name="DOB"
               className="bg-transparent border text-sm rounded-lg p-2 w-full "
-              {...register("DOB")}
+              {...register("DOB",validatorSchema.commonValidator)}
             />
+            <span className="text-red-600">{errors.DOB?.message}</span>
           </div>
           <div className="mb-2">
             <label htmlFor="gender" className="block mb-2">
@@ -82,7 +111,7 @@ const AddEmployee = () => {
                   name="gender"
                   value="male"
                   id="male"
-                  {...register("gender", { required: true })}
+                  {...register("gender",validatorSchema.commonValidator)}
                 />
                 Male
               </label>
@@ -92,7 +121,7 @@ const AddEmployee = () => {
                   name="gender"
                   value="female"
                   id="female"
-                  {...register("gender", { required: true })}
+                  {...register("gender",validatorSchema.commonValidator)}
                 />
                 Female
               </label>
@@ -102,11 +131,12 @@ const AddEmployee = () => {
                   name="gender"
                   value="other"
                   id="other"
-                  {...register("gender", { required: true })}
+                  {...register("gender",validatorSchema.commonValidator)}
                 />
                 Other
               </label>
             </div>
+            <span className="text-red-600">{errors.gender?.message}</span>
           </div>
           <div className="mb-2">
             <label htmlFor="address" className="block mb-2">
@@ -117,8 +147,9 @@ const AddEmployee = () => {
               name="address"
               placeholder="enter full address"
               className="bg-transparent border text-sm rounded-lg p-2 w-full "
-              {...register("address")}
+              {...register("address",validatorSchema.commonValidator)}
             />
+            <span className="text-red-600">{errors.address?.message}</span>
           </div>
           <div className="mb-2 flex gap-5 w-full">
             <div>
@@ -130,8 +161,9 @@ const AddEmployee = () => {
                 name="landmark"
                 placeholder="ex.st xavier school"
                 className="bg-transparent border text-sm rounded-lg p-2 w-full "
-                {...register("landmark")}
+                {...register("landmark",validatorSchema.commonValidator)}
               />
+              <span className="text-red-600">{errors.landmark?.message}</span>
             </div>
             <div>
               <label htmlFor="city" className="block mb-2">
@@ -142,8 +174,9 @@ const AddEmployee = () => {
                 name="city"
                 placeholder="ex.Ahmedabad"
                 className="bg-transparent border text-sm rounded-lg p-2 w-full "
-                {...register("city")}
+                {...register("city",validatorSchema.commonValidator)}
               />
+              <span className="text-red-600">{errors.city?.message}</span>
             </div>
             <div>
               <label htmlFor="state" className="block mb-2">
@@ -154,8 +187,9 @@ const AddEmployee = () => {
                 name="state"
                 placeholder="ex.Gujarat"
                 className="bg-transparent border text-sm rounded-lg p-2 w-full "
-                {...register("state")}
+                {...register("state",validatorSchema.commonValidator)}
               />
+              <span className="text-red-600">{errors.state?.message}</span>
             </div>
           </div>
           <hr />
@@ -170,8 +204,9 @@ const AddEmployee = () => {
               type="text"
               className="bg-transparent border text-sm rounded-lg p-2 w-full placeholder:text-gray"
               placeholder="ex. Fullstack developer"
-              {...register("jobtitle")}
+              {...register("jobtitle",validatorSchema.commonValidator)}
             />
+            <span className="text-red-600">{errors.jobtitle?.message}</span>
           </div>
           <div className="mb-2">
             <label htmlFor="department" className="block mb-2">
@@ -181,7 +216,7 @@ const AddEmployee = () => {
               id="department"
               name="department"
               className="bg-transparent border text-sm rounded-lg p-2 w-full"
-              {...register("department", { required: true })}
+              {...register("department",validatorSchema.commonValidator)}
             >
               <option className="bg-gray-400 border text-black" value="">
                 Select
@@ -202,6 +237,7 @@ const AddEmployee = () => {
                 Marketing
               </option>
             </select>
+              <span className="text-red-600">{errors.department?.message}</span>
           </div>
           <div className="mb-2">
             <label htmlFor="empType" className="block mb-2">
@@ -211,7 +247,7 @@ const AddEmployee = () => {
               id="empType"
               name="empType"
               className="bg-transparent border text-sm rounded-lg p-2 w-full"
-              {...register("empType", { required: true })}
+              {...register("empType",validatorSchema.commonValidator)}
             >
               <option className="bg-gray-400 border text-black" value="">
                 Select
@@ -241,6 +277,7 @@ const AddEmployee = () => {
                 APPRENTISE
               </option>
             </select>
+            <span className="text-red-600">{errors.empType?.message}</span>
           </div>
           <div className="mb-2">
             <label htmlFor="DOJ" className="block mb-2">
@@ -250,8 +287,9 @@ const AddEmployee = () => {
               type="date"
               name="DOJ"
               className="bg-transparent border text-sm rounded-lg p-2 w-full "
-              {...register("DOJ")}
+              {...register("DOJ",validatorSchema.commonValidator)}
             />
+            <span className="text-red-600">{errors.DOJ?.message}</span>
           </div>
           <div className="mb-2">
             <label htmlFor="location" className="block mb-2">
@@ -261,7 +299,7 @@ const AddEmployee = () => {
               id="location"
               name="location"
               className="bg-transparent border text-sm rounded-lg p-2 w-full"
-              {...register("location", { required: true })}
+              {...register("location",validatorSchema.commonValidator)}
             >
               <option className="bg-gray-400 border text-black" value="">
                 Select
@@ -276,6 +314,7 @@ const AddEmployee = () => {
                 Hybrid
               </option>
             </select>
+            <span className="text-red-600">{errors.location?.message}</span>
           </div>
           <div className="flex justify-center mt-3">
             <input
