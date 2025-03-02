@@ -320,7 +320,7 @@ const AddEmployee = () => {
             <input
               type="submit"
               value="Add Employee"
-              className="bg-blue-500 p-2 rounded-lg "
+              className="bg-blue-500 p-2 w-full rounded-lg "
             />
           </div>
         </form>

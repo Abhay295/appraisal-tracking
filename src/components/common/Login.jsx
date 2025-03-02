@@ -1,13 +1,15 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
+import axios from 'axios';
 
 const Login = () => {
 
   const {register,handleSubmit,formState:{errors}} = useForm();
 
-  const submitHandler = (data) =>{
-    console.log(data);
-    
+  const submitHandler = async (data) =>{
+    const res = await axios.post('http://localhost:3000/login',data)
+      console.log(res.data);
+      
   }
 
   const validationSchema = {
@@ -44,39 +46,39 @@ const Login = () => {
         <div className="h-4/6 bg-gray-200 rounded-2xl p-7">
         
           <div className="mb-2">
-          <label htmlFor="Email" className="block mb-2">
+          <label htmlFor="email" className="block mb-2">
             Email
           </label>
           <input
             type="text"
-            id="Email"
+            id="email"
             placeholder="example@gmail.com"
             className="w-full rounded border px-2 py-1 border-gray-400 text-gray-500 bg-transparent "
-            {...register("Email",validationSchema.emailValidator)}
+            {...register("email",validationSchema.emailValidator)}
           />
-          <span style={{color:"red"}}>{errors.Email?.message}</span>
+          <span style={{color:"red"}}>{errors.email?.message}</span>
           </div>
           
           <div className="mb-2">
-          <label htmlFor="Password" className="block mb-2">
+          <label htmlFor="password" className="block mb-2">
           Password
           </label>
           <input
             type="password"
-            id="Password"
+            id="password"
             placeholder="********"
             className="w-full rounded border border-gray-400 text-gray-500 bg-transparent px-2 py-0.5"
-            {...register("Password",validationSchema.passwordValidator)}
+            {...register("password",validationSchema.passwordValidator)}
           />
-          <span style={{color:"red"}}>{errors.Password?.message}</span>
+          <span style={{color:"red"}}>{errors.password?.message}</span>
           </div>
           <div>
 
           </div>
-          <div className="mb-2 flex gap-5 items-center h-10">
+          {/* <div className="mb-2 flex gap-2 items-center h-10">
             <input type="checkbox" className="w-5 h-5" name="remember" id="remember" {...register("remember")}/>
             <label htmlFor=""> Remember me </label>
-          </div>
+          </div> */}
           <div className=" mb-2 flex justify-center">
             <button type="submit" className="bg-blue-600 p-2 rounded-lg text-white">Login</button>
           </div>
