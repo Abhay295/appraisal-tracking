@@ -78,6 +78,7 @@ const login = async (req, res) => {
   }
 };
 
+
 const addUser = async (req, res) => {
   const addedUser = await userModel.create(req.body);
   res.json({

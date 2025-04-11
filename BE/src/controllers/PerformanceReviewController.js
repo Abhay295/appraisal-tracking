@@ -10,7 +10,7 @@ const addReview = async (req,res) =>{
 }
 
 const getAllReviews = async(req,res)=>{
-    const allReviews = await performanceReviewModel.find()
+    const allReviews = await performanceReviewModel.find().populate("employeeId reviewerId appraisalId")
     res.json({
         message:"all reviews fetched successfully",
         data:allReviews

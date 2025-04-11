@@ -28,6 +28,14 @@ const getGoalById = async (req,res)=>{
     })
 }
 
+const goalUpdateById = async (req,res)=>{
+    const updateGoal = await goalModel.findByIdAndUpdate(req.params.id,req.body,{new:true})
+    res.json({
+        message:"update successfully",
+        data:updateGoal
+    })
+}
+
 module.exports = {
-    addGoal, getAllGoals,getGoalById
+    addGoal, getAllGoals,getGoalById,goalUpdateById
 }

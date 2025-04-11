@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const ViewMyAppraisals = () => {
+const AllAppraisals = () => {
   const [appraisals, setAppraisals] = useState([]);
 
   const fetchAppraisals = async () => {
     try {
-      const userId = localStorage.getItem("id");
-      const res = await axios.get(`/appraisal/${userId}`);
+      const res = await axios.get("/appraisal/all");
       setAppraisals(res.data.data);
     } catch (err) {
       console.error("Error fetching appraisals:", err);
@@ -31,8 +30,6 @@ const ViewMyAppraisals = () => {
         return `${base} bg-yellow-100 text-yellow-800`;
       case "Needs Improvement":
         return `${base} bg-red-100 text-red-700`;
-      default:
-        return `${base} bg-gray-100 text-gray-700`;
     }
   };
 
@@ -40,7 +37,7 @@ const ViewMyAppraisals = () => {
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-indigo-100 py-10 px-6">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-4xl font-bold text-center text-gray-800 mb-10">
-          📈 My Appraisals
+          📋 All Appraisals
         </h2>
 
         {appraisals.length === 0 ? (
@@ -55,7 +52,7 @@ const ViewMyAppraisals = () => {
                 <div className="space-y-2 text-sm text-gray-800">
                   <div className="flex justify-between items-center mb-1">
                     <h3 className="text-lg font-bold text-purple-800">
-                      {item.userId?.firstName} {item.userId?.lastName}
+                      {item.userId.firstName} {item.userId.lastName}
                     </h3>
                     <span className={getRatingBadge(item.overallRating)}>
                       {item.overallRating}
@@ -79,9 +76,7 @@ const ViewMyAppraisals = () => {
 
                   <div>
                     <span className="font-semibold text-gray-600">Percentage: </span>
-                    <span className="text-purple-700 font-bold">
-                      {item.percentage === "pending" ? "Pending" : `${item.percentage}%`}
-                    </span>
+                    <span className="text-purple-700 font-bold">{item.percentage}{item.percentage === "pending" ? "" : "%"}</span>
                   </div>
                 </div>
               </div>
@@ -93,4 +88,4 @@ const ViewMyAppraisals = () => {
   );
 };
 
-export default ViewMyAppraisals;
+export default AllAppraisals;

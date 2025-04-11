@@ -22,10 +22,18 @@ const getAllAppraisal = async (req, res) => {
 };
 
 const getAppraisalById = async (req,res)=>{
-  const appraisalById = await appraisalController.find({userId:req.params.id})
+  const appraisalById = await appraisalController.find({userId:req.params.userId})
   res.json({
     message:"appraisal found successfully",
     data:appraisalById
+  })
+} 
+
+const updatePercentage = async (req,res)=>{
+  const percentage = await appraisalController.findByIdAndUpdate(req.params.id,req.body,{new:true})
+  res.json({
+    message:"percentage given successfully",
+    data:percentage
   })
 }
 
@@ -33,5 +41,6 @@ const getAppraisalById = async (req,res)=>{
 module.exports = {
   addAppraisal,
   getAllAppraisal,
-  getAppraisalById
+  getAppraisalById,
+  updatePercentage
 };

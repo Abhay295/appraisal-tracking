@@ -1,33 +1,37 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   FaTimes,
   FaUser,
   FaClipboardList,
-  FaChartLine,
-  FaTasks,
   FaBars,
   FaUserCircle,
   FaStar,
-  FaGraduationCap,
-  FaBell,
 } from "react-icons/fa";
-import { MdDashboard, MdOutlineDateRange } from "react-icons/md";
+import { MdDashboard, MdOutlineDateRange, MdTrackChanges } from "react-icons/md";
 import { IoIosAddCircle, IoIosLogOut } from "react-icons/io";
 import { GrFormView } from "react-icons/gr";
 
 const UserSidebar = () => {
-  
-    const [isAppraisalOpen, setIsAppraisalOpen] = useState(false);
+  const [isAppraisalOpen, setIsAppraisalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+
+const navigate = useNavigate()
+
+  const handleLogout=()=>{
+    localStorage.removeItem("id")
+    localStorage.removeItem("role")
+    navigate("/")
+  }
 
   return (
     <>
       {/* Hamburger Icon */}
       {!isOpen && (
         <button
-          className="md:hidden text-gray-700 fixed top-4 left-4 z-50"
+          className="md:hidden lg:hidden text-gray-700 fixed top-0 left-0 px-4 block bg-white w-full py-2 z-50"
           onClick={() => setIsOpen(true)}
         >
           <FaBars size={30} />
@@ -36,7 +40,7 @@ const UserSidebar = () => {
 
       {/* Sidebar Content */}
       <aside
-        className={`bg-gradient-to-b from-purple-600 to-indigo-600 w-64 min-h-screen p-4 text-white border-r fixed top-0 left-0 h-full transition-transform transform ${
+        className={`bg-gradient-to-b from-purple-600 to-indigo-600 w-64 min-h-screen p-4 text-white z-50 border-r fixed top-0 left-0 h-full transition-transform transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:relative md:translate-x-0`}
       >
@@ -55,6 +59,7 @@ const UserSidebar = () => {
         <ul>
           <li className="mb-2">
             <NavLink
+              onClick={() => setIsAppraisalOpen(false)}
               to="/user"
               className="flex items-center p-3 rounded hover:bg-white hover:text-purple-500 transition"
             >
@@ -65,31 +70,34 @@ const UserSidebar = () => {
 
           <li className="mb-2">
             <NavLink
-              to="/user/profile"
-              className="flex items-center p-3 rounded hover:bg-white hover:text-purple-500 transition"
+              // onClick={() => setIsAppraisalOpen(false)}
+              to="/user/goals"
+              className="block p-3 rounded hover:bg-white hover:text-purple-500 "
             >
-              <FaUserCircle className="mr-2" />
-              Profile
+              <div className="flex items-center">
+                <MdTrackChanges className="mr-2" />
+                Goal Tracking
+              </div>
             </NavLink>
           </li>
 
-
-          <li className="mb-2">
+          {/* <li className="mb-2">
             <button
               onClick={() => setIsAppraisalOpen(!isAppraisalOpen)}
-              className="flex w-full items-center justify-between p-3 rounded hover:bg-purple-700 hover:text-white"
+              className="flex w-full items-center justify-between p-3 rounded hover:bg-white hover:text-purple-500"
             >
               <div className="flex items-center">
                 <FaClipboardList className="mr-2" />
                 Goal
               </div>
             </button>
+
             {isAppraisalOpen && (
               <ul className="pl-6">
                 <li>
                   <NavLink
                     to="/user/goals/add"
-                    className="block p-2 rounded hover:bg-purple-700 hover:text-white"
+                    className="block p-2 rounded hover:bg-white hover:text-purple-500"
                   >
                     <div className="flex items-center">
                       <IoIosAddCircle size={20} className="mr-2" />
@@ -100,7 +108,7 @@ const UserSidebar = () => {
                 <li>
                   <NavLink
                     to="/user/goals/view"
-                    className="block p-2 rounded hover:bg-purple-700 hover:text-white"
+                    className="block p-2 rounded hover:bg-white hover:text-purple-500"
                   >
                     <div className="flex items-center">
                       <GrFormView size={30} className="mr-2" />
@@ -110,12 +118,13 @@ const UserSidebar = () => {
                 </li>
               </ul>
             )}
-          </li>
+          </li> */}
 
-            {/* end Here */}
+          {/* end Here */}
 
           <li className="mb-2">
             <NavLink
+              onClick={() => setIsAppraisalOpen(false)}
               to="/user/appraisals"
               className="flex items-center p-3 rounded hover:bg-white hover:text-purple-500 transition"
             >
@@ -126,16 +135,7 @@ const UserSidebar = () => {
 
           <li className="mb-2">
             <NavLink
-              to="/user/reports"
-              className="flex items-center p-3 rounded hover:bg-white hover:text-purple-500 transition"
-            >
-              <FaChartLine className="mr-2" />
-              Reports
-            </NavLink>
-          </li>
-
-          <li className="mb-2">
-            <NavLink
+              onClick={() => setIsAppraisalOpen(false)}
               to="/user/review"
               className="flex items-center p-3 rounded hover:bg-white hover:text-purple-500 transition"
             >
@@ -146,12 +146,22 @@ const UserSidebar = () => {
 
           <li className="mb-2">
             <NavLink
-              to="/user/training"
+              onClick={() => setIsAppraisalOpen(false)}
+              to="/user/profile"
               className="flex items-center p-3 rounded hover:bg-white hover:text-purple-500 transition"
             >
-              <FaGraduationCap className="mr-2" />
-              Training
+              <FaUserCircle className="mr-2" />
+              Profile
             </NavLink>
+          </li>
+          <li className="mb-2">
+            <div
+              onClick={handleLogout}
+              className="flex items-center p-3 rounded hover:bg-white hover:text-purple-500 transition"
+            >
+              <IoIosLogOut  className="mr-2" />
+            Logout
+            </div>
           </li>
         </ul>
       </aside>

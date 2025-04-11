@@ -1,96 +1,110 @@
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useEffect, useState } from "react";
-
 
 const ViewGoals = () => {
-    const [goals, setGoals] = useState([]);
+  const [goals, setGoals] = useState([]);
 
-    // Fetch all goals from API
-    useEffect(() => {
-      const fetchGoals = async () => {
-        const id = localStorage.getItem("id")
-        try {
-          const response = await axios.get(`/goals/${id}`); // Replace with your endpoint
-          setGoals(response.data.data);
-        } catch (error) {
-          console.error("Error fetching goals:", error);
-        }
-      };
-  
+  const fetchGoals = async () => {
+    try {
+      const employeeId = localStorage.getItem("id");
+      const res = await axios.get(`/goals/${employeeId}`);
+      setGoals(res.data.data);
+    } catch (err) {
+      console.error("Error fetching goals:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchGoals();
+  }, []);
+
+  const updateStatus = async (goal) => {
+    let newStatus = goal.status === "Not Started" ? "In Progress" : "Completed";
+    try {
+      await axios.put(`/goals/update/${goal._id}`, { status: newStatus });
       fetchGoals();
-    }, []);
+    } catch (err) {
+      console.error("Error updating status:", err);
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case "Not Started":
+        return "🕒 Not Started";
+      case "In Progress":
+        return "⚙️ In Progress";
+      case "Completed":
+        return "✅ Completed";
+      default:
+        return "❓ Unknown";
+    }
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-100 to-indigo-100 p-6">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-4xl">
-        {/* Title */}
-        <h2 className="text-3xl font-bold text-center text-purple-900 mb-6">
-          📈 View All Goals
-        </h2>
+    <div className="min-h-screen bg-gradient-to-br from-[#e0c3fc] to-[#8ec5fc] p-10">
+      <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-10 drop-shadow-md">
+        🚀 My Goals
+      </h1>
 
-        {/* Goal Table */}
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-inner">
-            <thead className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
-              <tr>
-                <th className="text-left p-3 font-semibold">Goal Name</th>
-                <th className="text-left p-3 font-semibold">Description</th>
-                <th className="text-left p-3 font-semibold">Start Date</th>
-                <th className="text-left p-3 font-semibold">End Date</th>
-                <th className="text-left p-3 font-semibold">Progress</th>
-                <th className="text-left p-3 font-semibold">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {goals.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan="6"
-                    className="text-center text-gray-500 p-4 italic"
+      {goals.length === 0 ? (
+        <p className="text-center text-gray-700 text-lg">No goals found.</p>
+      ) : (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {goals.map((goal) => (
+            <div
+              key={goal._id}
+              className="backdrop-blur-md bg-white/70 border border-white/30 shadow-xl rounded-xl p-6 transition-transform hover:scale-[1.02]"
+            >
+              <div className="mb-3">
+                <h3 className="text-xl font-bold text-gray-900 mb-1">
+                  {goal.goalName}
+                </h3>
+                <p className="text-sm text-gray-700 mb-2">{goal.goalDescription}</p>
+                <p className="text-sm text-gray-600 italic">
+                  📅 {new Date(goal.startDate).toLocaleDateString()} -{" "}
+                  {new Date(goal.endDate).toLocaleDateString()}
+                </p>
+              </div>
+
+              <div className="flex justify-between items-center mt-4">
+                <span
+                  className={`text-xs px-3 py-1 rounded-full font-medium ${
+                    goal.status === "Completed"
+                      ? "bg-green-100 text-green-800"
+                      : goal.status === "In Progress"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : "bg-gray-200 text-gray-800"
+                  }`}
+                >
+                  {getStatusBadge(goal.status)}
+                </span>
+
+                {goal.status !== "Completed" && (
+                  <button
+                    onClick={() => updateStatus(goal)}
+                    className={`text-xs px-4 py-2 rounded-full font-semibold transition hover:scale-105 ${
+                      goal.status === "Not Started"
+                        ? "bg-blue-600 text-white hover:bg-blue-700"
+                        : "bg-green-600 text-white hover:bg-green-700"
+                    }`}
                   >
-                    No goals found. 🚫
-                  </td>
-                </tr>
-              ) : (
-                goals.map((goal) => (
-                  <tr
-                    key={goal._id}
-                    className="hover:bg-gray-100 transition-all"
-                  >
-                    <td className="p-3 border-b border-gray-200">
-                      {goal.goalName}
-                    </td>
-                    <td className="p-3 border-b border-gray-200">
-                      {goal.goalDescription}
-                    </td>
-                    <td className="p-3 border-b border-gray-200">
-                      {new Date(goal.startDate).toLocaleDateString()}
-                    </td>
-                    <td className="p-3 border-b border-gray-200">
-                    {new Date(goal.endDate).toLocaleDateString()}
-                    </td>
-                    <td className="p-3 border-b border-gray-200">
-                      {goal.progress}%
-                    </td>
-                    <td
-                      className={`p-3 border-b border-gray-200 font-semibold ${
-                        goal.status === "Completed"
-                          ? "text-green-600"
-                          : goal.status === "In Progress"
-                          ? "text-yellow-500"
-                          : "text-red-500"
-                      }`}
-                    >
-                      {goal.status}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                    {goal.status === "Not Started" ? "🚀 Start" : "✅ Complete"}
+                  </button>
+                )}
+
+                {goal.status === "Completed" && (
+                  <span className="text-green-700 font-semibold text-sm">
+                    🎉 Done
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default ViewGoals
+export default ViewGoals;

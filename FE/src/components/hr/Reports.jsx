@@ -66,25 +66,22 @@ const Reports = () => {
                   </td>
                   <td
                     className={`p-3 border-b border-gray-200 font-bold ${
-                      report.overallRating == "Excellent" || "Good"
-                        ? "text-green-600"
-                        : report.overallRating == "Average" || "Needs Improvement"
-                        ? "text-yellow-500"
-                        : "text-red-500"
+                      report.overallRating == "Excellent" ? "text-green-600" :
+                      report.overallRating == "Good" ? "text-blue-600" : 
+                      report.overallRating == "Average" ? "text-yellow-500" : 
+                      report.overallRating == "Needs Improvement" ? "text-red-500":""
                     }`}
                   >
                     {report.overallRating}
                   </td>
                   <td
                     className={`p-3 border-b border-gray-200 font-semibold ${
-                      report.status === "Completed"
-                        ? "text-green-600"
-                        : report.status === "In Progress"
-                        ? "text-yellow-500"
-                        : "text-red-500"
+                      report.percentage === "pending"
+                        ? "text-yellow-600"
+                        : "text-green-500"
                     }`}
                   >
-                    {report.status}
+                    {report.percentage === "pending" ? "pending" : "completed"}
                   </td>
                 </tr>
               ))

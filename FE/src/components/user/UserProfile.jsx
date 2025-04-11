@@ -1,122 +1,65 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const UserProfile = () => {
-  const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
-  // Fetch Profile Data
+  const fetchProfile = async () => {
+    const id = localStorage.getItem("id");
+    try {
+      const res = await axios.get(`/user/${id}`);
+      setUser(res.data.data);
+    } catch (err) {
+      console.error("Failed to fetch profile", err);
+    }
+  };
+
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const userId = localStorage.getItem("id");
-        const res = await axios.get("/user/" + userId);
-        setProfileData(res.data.data);
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchProfile();
   }, []);
 
-  // Handle Update Profile Click
-  const handleUpdateProfile = () => {
-    navigate("/user/update"); // Redirect to the update profile page
-  };
+  if (!user) return <div className="text-center mt-20 text-gray-500">Loading...</div>;
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="text-gray-500">Loading profile...</div>
-      </div>
-    );
-  }
+  const initials = `${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`.toUpperCase();
 
-  if (!profileData) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="text-red-500">Error loading profile!</div>
-      </div>
-    );
-  }
   return (
-    
+    <div className="min-h-screen flex justify-center items-center bg-gray-100 px-4">
+      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md text-gray-800">
+        {/* Title */}
+        <h2 className="text-2xl font-semibold text-center mb-6">My Profile</h2>
 
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-       <div className="bg-white shadow-md rounded-lg w-full max-w-md p-6 border border-gray-200">
-         <h2 className="text-2xl font-semibold text-center text-gray-700 mb-4">
-           My Profile
-         </h2>
-
-         {/* Profile Image */}
-         <div className="flex justify-center mb-4">
-           <img
-            src={profileData.profilePic || "/default-avatar.png"}
-            alt="Profile"
-            className="w-24 h-24 rounded-full border border-gray-300 object-cover shadow-md"
-          />
-        </div>
-
-        {/* User Details */}
-        <div className="space-y-3 text-gray-600">
-          {/* Full Name */}
-          <div className="flex justify-between">
-            <span className="font-semibold">Full Name:</span>
-            <span>
-              {profileData.firstName} {profileData.lastName}
-            </span>
-          </div>
-
-          {/* Email */}
-          <div className="flex justify-between">
-            <span className="font-semibold">Email:</span>
-            <span>{profileData.email}</span>
-          </div>
-
-          {/* Contact Number */}
-          <div className="flex justify-between">
-            <span className="font-semibold">Contact:</span>
-            <span>{profileData.contactNum}</span>
-          </div>
-
-          {/* Department */}
-          <div className="flex justify-between">
-            <span className="font-semibold">Department:</span>
-            <span>{profileData.departmentId.name || "N/A"}</span>
-          </div>
-
-          {/* Role */}
-          <div className="flex justify-between">
-            <span className="font-semibold">Role:</span>
-            <span>{profileData.roleId.name || "N/A"}</span>
-          </div>
-
-          {/* Joining Date */}
-          <div className="flex justify-between">
-            <span className="font-semibold">Joining Date:</span>
-            <span>
-              {new Date(profileData.dateOfJoining).toLocaleDateString()}
-            </span>
+        {/* Avatar */}
+        <div className="flex justify-center mb-6">
+          <div className="w-20 h-20 rounded-full bg-purple-600 text-white flex items-center justify-center text-2xl font-bold shadow-md">
+            {initials}
           </div>
         </div>
 
-        {/* Update Profile Button */}
-        <div className="mt-6 text-center">
-          <button
-            onClick={handleUpdateProfile}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-200"
-          >
-            Update Profile
-          </button>
+        {/* Info */}
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          <p className="font-semibold">Full Name:</p>
+          <p>{user.firstName} {user.lastName}</p>
+
+          <p className="font-semibold">Email:</p>
+          <p>{user.email}</p>
+
+          <p className="font-semibold">Contact:</p>
+          <p>{user.contactNum || "N/A"}</p>
+
+          <p className="font-semibold">Department:</p>
+          <p>{user.departmentId.name || "N/A"}</p>
+
+          <p className="font-semibold">Role:</p>
+          <p>{user.roleId.name}</p>
+
+          <p className="font-semibold">Joining Date:</p>
+          <p>{new Date(user.dateOfJoining).toLocaleDateString('en-GB')}</p>
         </div>
+
+       
       </div>
     </div>
+  );
+};
 
-  )
-}
-
-export default UserProfile
+export default UserProfile;

@@ -23,9 +23,8 @@ const AppraisalSchema = new Schema({
     type:String,
     require:true
   },
-  status:{
+  percentage:{
     type:String,
-    require:true,
     default:"pending"
   }
 },{
@@ -33,3 +32,4 @@ const AppraisalSchema = new Schema({
 });
 
 module.exports = mongoose.model("appraisal",AppraisalSchema)
+  

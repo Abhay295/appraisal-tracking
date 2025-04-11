@@ -1,93 +1,107 @@
-import React, { useState } from 'react'
-import { FaBars, FaBell, FaChartLine, FaCheckCircle, FaClipboardList, FaExclamationTriangle, FaGraduationCap, FaStar, FaTimes, FaTrophy, FaUserCircle } from 'react-icons/fa'
-import { MdDashboard, MdOutlineDateRange, MdPendingActions } from 'react-icons/md'
-import { NavLink } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const UserDashboard = () => {
-  
+  const employeeId = localStorage.getItem("id");
+
+  const [employee, setEmployee] = useState(null);
+  const [appraisals, setAppraisals] = useState([]);
+  const [goals, setGoals] = useState([]);
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    if (employeeId) {
+      fetchEmployeeData();
+    }
+  }, [employeeId]);
+
+  const fetchEmployeeData = async () => {
+    try {
+      const [userRes, appraisalRes, goalRes, reviewRes] = await Promise.all([
+        axios.get(`/user/${employeeId}`),
+        axios.get(`/appraisal/${employeeId}`),
+        axios.get(`/goals/${employeeId}`),
+        axios.get(`/review/${employeeId}`),
+      ]);
+
+      setEmployee(userRes.data.data || {});
+      setAppraisals(appraisalRes.data.data || []);
+      setGoals(goalRes.data.data || []);
+      setReviews(reviewRes.data.data || []);
+    } catch (err) {
+      console.error("Error loading dashboard:", err);
+    }
+  };
 
   return (
-    
+    <div className="min-h-screen bg-gradient-to-br from-white to-purple-100 py-12 px-6">
+      <div className="max-w-7xl mx-auto space-y-10">
+        {/* Header */}
+        <h1 className="text-4xl font-bold text-center text-gray-800">
+          👋 Welcome Back,{" "}
+          <span className="text-purple-600">
+            {employee?.firstName} {employee?.lastName}
+          </span>
+        </h1>
 
-
-  <div className="p-8 bg-gray-100 min-h-screen">
-      {/* Welcome Section */}
-      <h1 className="text-4xl font-bold text-purple-900 mb-8">
-        Welcome, Employee!
-      </h1>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {/* Completed Appraisals */}
-        <div className="bg-gradient-to-r from-green-400 to-teal-500 rounded-lg shadow-lg p-6 text-white hover:scale-105 transition-transform">
-          <FaCheckCircle className="text-3xl mb-2" />
-          <h3 className="text-lg font-semibold">Completed Appraisals</h3>
-          <p className="text-3xl font-bold">3</p>
+        {/* Stats Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
+          <StatCard title="Appraisals Completed" value={appraisals.length} color="bg-green-100" icon="📄" />
+          <StatCard title="Reviews" value={reviews.length} color="bg-yellow-100" icon="📝" />
+          <StatCard title="Active Goals" value={goals.length} color="bg-blue-100" icon="🎯" />
         </div>
 
-        {/* Pending Reviews */}
-        <div className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg shadow-lg p-6 text-white hover:scale-105 transition-transform">
-          <MdPendingActions className="text-3xl mb-2" />
-          <h3 className="text-lg font-semibold">Pending Reviews</h3>
-          <p className="text-3xl font-bold">1</p>
-        </div>
+        {/* Goals List */}
+        <div className="bg-white rounded-xl shadow-md p-8">
+          <h2 className="text-2xl font-bold text-purple-700 mb-6 flex items-center gap-2">
+            🎯 My Current Goals
+          </h2>
 
-        {/* Performance Score */}
-        <div className="bg-gradient-to-r from-blue-400 to-indigo-500 rounded-lg shadow-lg p-6 text-white hover:scale-105 transition-transform">
-          <FaChartLine className="text-3xl mb-2" />
-          <h3 className="text-lg font-semibold">Performance Score</h3>
-          <p className="text-3xl font-bold">85%</p>
-        </div>
-
-        {/* Training Recommendations */}
-        <div className="bg-gradient-to-r from-purple-400 to-pink-500 rounded-lg shadow-lg p-6 text-white hover:scale-105 transition-transform">
-          <FaGraduationCap className="text-3xl mb-2" />
-          <h3 className="text-lg font-semibold">Training Recommendations</h3>
-          <p className="text-3xl font-bold">2</p>
+          {goals.length === 0 ? (
+            <p className="text-gray-500">No goals assigned yet.</p>
+          ) : (
+            <div className="space-y-4">
+              {goals.map((goal) => (
+                <div
+                  key={goal._id}
+                  className="border border-gray-200 p-4 rounded-md flex justify-between items-center hover:shadow-sm transition"
+                >
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-800">{goal.goalName}</h4>
+                    <p className="text-sm text-gray-500">{goal.goalDescription}</p>
+                  </div>
+                  <span
+                    className={`px-3 py-1 text-sm rounded-full font-semibold ${
+                      goal.status === "Completed"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : goal.status === "In Progress"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-gray-200 text-gray-700"
+                    }`}
+                  >
+                    {goal.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Goals & Recent Feedback */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        {/* Goals Section */}
-        <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold text-purple-900 mb-4">My Goals</h2>
-          <ul className="space-y-4">
-            <li className="flex justify-between items-center p-3 bg-white rounded-lg shadow hover:bg-gray-100 transition">
-              <span className="text-gray-700">Complete Project A</span>
-              <span className="text-sm text-blue-600">In Progress</span>
-            </li>
-            <li className="flex justify-between items-center p-3 bg-white rounded-lg shadow hover:bg-gray-100 transition">
-              <span className="text-gray-700">Leadership Training</span>
-              <span className="text-sm text-green-600">Completed</span>
-            </li>
-          </ul>
-        </div>
-
-        {/* Recent Feedback Section */}
-        <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold text-purple-900 mb-4">
-            Recent Feedback
-          </h2>
-          <ul className="space-y-4">
-            <li className="flex justify-between items-center p-3 bg-white rounded-lg shadow hover:bg-gray-100 transition">
-              <span className="text-gray-700">Positive feedback on leadership</span>
-              <span className="text-sm text-green-500">1 week ago</span>
-            </li>
-            <li className="flex justify-between items-center p-3 bg-white rounded-lg shadow hover:bg-gray-100 transition">
-              <span className="text-gray-700">Communication improvement needed</span>
-              <span className="text-sm text-yellow-500">2 weeks ago</span>
-            </li>
-          </ul>
-        </div>
-      </div> 
     </div>
- 
+  );
+};
 
-
- 
-
-  )
-}
+// 🎨 Stat Card Component
+const StatCard = ({ title, value, color, icon }) => (
+  <div className={`rounded-xl p-6 shadow-md hover:shadow-lg transition ${color}`}>
+    <div className="flex items-center gap-4">
+      <div className="text-3xl">{icon}</div>
+      <div>
+        <h4 className="text-gray-800 text-lg font-medium">{title}</h4>
+        <p className="text-2xl font-bold text-purple-800">{value}</p>
+      </div>
+    </div>
+  </div>
+);
 
 export default UserDashboard

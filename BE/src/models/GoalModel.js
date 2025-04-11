@@ -22,12 +22,8 @@ const goalSchema = new Schema({
     type: String,
     require: true,
   },
-  progress:{
-    type:Number,
-    require:true
-  },
   status:{
-    type:String,
+    type:String,  
     require:true
   }
 

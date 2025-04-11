@@ -1,12 +1,12 @@
 import React from 'react'
-import UserSidebar from '../user/UserSidebar'
 import { Outlet } from 'react-router-dom'
+import HrSidebar from '../hr/HrSidebar'
 
-const UserDashboardLayout = () => {
+const HrDashboardLayout = () => {
   return (
     <div className="flex ">
      <div className='fixed'>
-     <UserSidebar />
+     <HrSidebar />
      </div>
       <div className="flex-1 sm:ml-0 md:ml-64 lg:ml-64 xl:ml-64 2xl:ml-64">
         <Outlet />
@@ -15,4 +15,4 @@ const UserDashboardLayout = () => {
   )
 }
 
-export default UserDashboardLayout
+export default HrDashboardLayout

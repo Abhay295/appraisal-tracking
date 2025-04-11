@@ -38,7 +38,7 @@ const SignUp = () => {
     try {
       setIsLoading(true)
       const res = await axios.post("/signup", data);
-      console.log(res.data);
+      console.log(res.data.data);
       if (res.status === 200) {
         toast("✅ Signup successfully", {
           position: "top-right",
@@ -143,141 +143,8 @@ const SignUp = () => {
     },
   };
   return (
-    // <div className="flex items-center justify-center min-h-screen bg-gray-100">
-    //   <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
-    //   <h2 className="text-2xl font-bold text-center mb-6">Sign Up</h2>
-    //   <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
-    //       <div className="grid grid-cols-2 gap-4">
-    //         {/* First Name */}
-    //         <div className="flex flex-col">
-    //           <label className="text-gray-700">First Name</label>
-    //           <input
-    //             {...register("firstName", { required: "First Name is required" })}
-    //             type="text"
-    //             className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
-    //           />
-    //           {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName.message}</p>}
-    //         </div>
-
-    //         {/* Last Name */}
-    //         <div className="flex flex-col">
-    //           <label className="text-gray-700">Last Name</label>
-    //           <input
-    //             {...register("lastName", { required: "Last Name is required" })}
-    //             type="text"
-    //             className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
-    //           />
-    //           {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName.message}</p>}
-    //         </div>
-    //       </div>
-
-    //       {/* Email */}
-    //       <div className="flex flex-col">
-    //         <label className="text-gray-700">Email</label>
-    //         <input
-    //           {...register("email", { required: "Email is required", pattern: { value: /^\S+@\S+$/i, message: "Invalid email" } })}
-    //           type="email"
-    //           className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
-    //         />
-    //         {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-    //       </div>
-
-    //       {/* Password */}
-    //       <div className="flex flex-col">
-    //         <label className="text-gray-700">Password</label>
-    //         <input
-    //           {...register("password", { required: "Password is required", minLength: { value: 8, message: "Minimum 6 characters required" } })}
-    //           type="password"
-    //           className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
-    //         />
-    //         {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
-    //       </div>
-
-    //       {/* Gender & Contact Number */}
-    //       <div className="grid grid-cols-2 gap-4">
-    //         {/* Gender */}
-    //         <div className="flex flex-col">
-    //           <label className="text-gray-700">Gender</label>
-    //           <select
-    //             {...register("gender", { required: "Gender is required" })}
-    //             className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
-    //           >
-    //             <option value="">Select Gender</option>
-    //             <option value="male">Male</option>
-    //             <option value="female">Female</option>
-    //             <option value="other">Other</option>
-    //           </select>
-    //           {errors.gender && <p className="text-red-500 text-sm">{errors.gender.message}</p>}
-    //         </div>
-
-    //         {/* Contact Number */}
-    //         <div className="flex flex-col">
-    //           <label className="text-gray-700">Contact Number</label>
-    //           <input
-    //             {...register("contactNum", { required: "Contact Number is required", pattern: { value: /^[0-9]+$/, message: "Only numbers allowed" } })}
-    //             type="text"
-    //             className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
-    //           />
-    //           {errors.contactNum && <p className="text-red-500 text-sm">{errors.contactNum.message}</p>}
-    //         </div>
-    //       </div>
-
-    //       {/* Role Dropdown */}
-    //       <div className="flex flex-col">
-    //         <label className="text-gray-700">Role</label>
-    //         <select
-    //           {...register("roleId", { required: "Role is required" })}
-    //           className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
-    //         >
-    //           <option value="">Select Role</option>
-    //           {roles.map((role) => {
-    //               return <option value={role._id}>{role.name}</option>;
-    //             })}
-    //         </select>
-    //         {errors.roleId && <p className="text-red-500 text-sm">{errors.roleId.message}</p>}
-    //       </div>
-
-    //       {/* Date of Joining */}
-    //       <div className="flex flex-col">
-    //         <label className="text-gray-700">Date of Joining</label>
-    //         <input
-    //           {...register("dateOfJoining", { required: "Date of Joining is required" })}
-    //           type="date"
-    //           className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
-    //         />
-    //         {errors.dateOfJoining && <p className="text-red-500 text-sm">{errors.dateOfJoining.message}</p>}
-    //       </div>
-
-    //       {/* Department Dropdown */}
-    //       <div className="flex flex-col">
-    //         <label className="text-gray-700">Department</label>
-    //         <select
-    //           {...register("departmentId", { required: "Department is required" })}
-    //           className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
-    //         >
-    //           <option value="">Select Department</option>
-    //           {departments.map((department) => {
-    //               return (
-    //                 <option value={department._id}>{department.name}</option>
-    //               );
-    //             })}
-    //         </select>
-    //         {errors.departmentId && <p className="text-red-500 text-sm">{errors.departmentId.message}</p>}
-    //       </div>
-
-    //       {/* Submit Button */}
-    //       <button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded">
-    //         Sign Up
-    //       </button>
-
-    //       <p className="text-center text-gray-700 mt-4">
-    //         Already have an account? <Link to="/login" className="text-blue-500 hover:underline">Login here</Link>
-    //       </p>
-    //     </form>
-    //   </div>
-    //   </div>
+    
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-gray-100 to-purple-100">
-        <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
           {/* Toast Notification */}
           <ToastContainer
             position="top-right"
@@ -290,7 +157,9 @@ const SignUp = () => {
             transition={Bounce}
           />
   
-          {/* Title */}
+          {isLoading ? <Loader/> : 
+          
+        <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
           <h2 className="text-3xl font-extrabold text-center text-purple-700 mb-6">
             Employee Sign Up
           </h2>
@@ -502,7 +371,9 @@ const SignUp = () => {
               </Link>
             </p>
           </form>
+        
         </div>
+          }
       </div>
   
     

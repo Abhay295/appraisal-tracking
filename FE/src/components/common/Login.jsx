@@ -40,6 +40,8 @@ const Login = () => {
         setTimeout(() => {
           if (res.data.data.roleId.name === "Developer") {
             navigate("/user");
+          } else if (res.data.data.roleId.name === "HR") {
+            navigate("/hr");
           } else {
             navigate("/admin");
           }
@@ -97,7 +99,6 @@ const Login = () => {
         value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
       },
     },
-
   };
   return (
     // <div className="flex items-center justify-center min-h-screen bg-gray-100">

@@ -6,7 +6,7 @@ import { FaBullseye } from "react-icons/fa";
 import { BiMessageDetail } from "react-icons/bi";
 import { AiOutlineCalendar } from "react-icons/ai";
 
-const AdminDashboard = () => {
+const HrDashboard = () => {
   const [users, setUsers] = useState([]);
   const [appraisals, setAppraisals] = useState([]);
   const [goals, setGoals] = useState([]);
@@ -39,7 +39,7 @@ const AdminDashboard = () => {
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Header */}
         <h1 className="text-4xl font-bold text-gray-800 text-center">
-          Admin Dashboard
+          HR Dashboard
         </h1>
 
         {/* Summary Cards */}
@@ -126,4 +126,4 @@ const SummaryCard = ({ title, value, icon, bg }) => (
 // 🗓 Format Date
 const formatDate = (date) => new Date(date).toLocaleDateString("en-GB");
 
-export default AdminDashboard;
+export default HrDashboard;
