@@ -10,5 +10,6 @@ routes.get("/user/:id",userController.getUserById)
 routes.delete("/delete/:id",userController.deleteUser)
 routes.post("/forgot",userController.forgotPassword)
 routes.post("/resetpassword",userController.resetpassword)
+// routes.post("/addprofile",userController.addProfileImage)
 
 module.exports = routes

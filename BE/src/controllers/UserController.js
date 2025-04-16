@@ -3,45 +3,44 @@ const userModel = require("../models/UserModel");
 const mailUtil = require("../utils/MailUtils");
 const jwt = require("jsonwebtoken");
 const secret = "secret";
-const cloudinaryUtils = require("../utils/CloudinaryUtils")
-const multer = require("multer")
+const cloudinaryUtils = require("../utils/CloudinaryUtils");
+const multer = require("multer");
+const path = require("path");
 
 const storage = multer.diskStorage({
-  destination : "./uploads",
-  filename: function(req,file, cb){
+  destination: "./uploads",
+  filename: function (req, file, cb) {
     cb(null, file.originalname);
-  }
-})
+  },
+});
 
 const upload = multer({
-  storage:storage,
-}).single("image")
+  storage: storage,
+}).single("image");
 
+// const signUp = async (req, res) => {
+//   try {
+//     const salt = bcrypt.genSaltSync(10);
+//     const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+//     req.body.password = hashedPassword;
 
-
-const signUp = async (req, res) => {
-  try {
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(req.body.password, salt);
-    req.body.password = hashedPassword;
-
-    const signupUser = await userModel.create(req.body);
-    await mailUtil.sendingMail(
-      signupUser.email,
-      "Welcome mail",
-      "This email from appraisal tracker"
-    );
-    res.status(200).json({
-      message: "Signup successfully",
-      data: signupUser,
-    });
-  } catch (err) {
-    res.status(500).json({
-      message: "error",
-      data: err,
-    });
-  }
-};
+//     const signupUser = await userModel.create(req.body);
+//     await mailUtil.sendingMail(
+//       signupUser.email,
+//       "Welcome mail",
+//       "This email from appraisal tracker"
+//     );
+//     res.status(200).json({
+//       message: "Signup successfully",
+//       data: signupUser,
+//     });
+//   } catch (err) {
+//     res.status(500).json({
+//       message: "error",
+//       data: err,
+//     });
+//   }
+// };
 
 const login = async (req, res) => {
   try {
@@ -78,7 +77,6 @@ const login = async (req, res) => {
   }
 };
 
-
 const addUser = async (req, res) => {
   const addedUser = await userModel.create(req.body);
   res.json({
@@ -87,26 +85,82 @@ const addUser = async (req, res) => {
   });
 };
 
-const addProfileImage = async (req,res)=>{
-  upload(req,res, async(err)=>{
-    if(err){
-      console.log(err);
-      res.status(500).json({message: err.message})
-    } else{
-      const cloudinaryResponse = await cloudinaryUtils.uploadFileToCloudinary(req.file)
+// const addProfileImage = async (req, res) => {
+//   upload(req, res, async (err) => {
+//     if (err) {
+//       console.log(err);
+//       res.status(500).json({ message: err.message });
+//     } else {
+//       const cloudinaryResponse = await cloudinaryUtils.uploadFileToCloudinary(
+//         req.file
+//       );
 
-      req.body.imageUrl = cloudinaryResponse.secure_url;
-      const savedProfileImage = await userModel.create(req.body);
-      res.status(201).json({
-        message:"image upload successfully",
-        data: savedProfileImage
-        
-      })
+//       req.body.imageUrl = cloudinaryResponse.secure_url;
+//       const savedProfileImage = await userModel.create(req.body);
+//       res.status(201).json({
+//         message: "image upload successfully",
+//         data: savedProfileImage,
+//       });
+//     }
+//   });
+// };
 
+
+
+const signUp = async (req, res) => {
+  upload(req, res, async (err) => {
+    try {
+      if (err) {
+        console.log("Upload Error:", err);
+        return res.status(500).json({ message: err.message });
+      }else{
+        const cloudinaryResponse = await cloudinaryUtils.uploadFileToCloudinary(req.file);
+        req.body.imageUrl = cloudinaryResponse.secure_url;
+      }
+
+      // Handle password hashing
+      const salt = bcrypt.genSaltSync(10);
+      const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+      req.body.password = hashedPassword;
+
+
+      // Save user with image URL
+      const signupUser = await userModel.create(req.body);
+
+      // Send welcome email
+      await mailUtil.sendingMail(
+        signupUser.email,
+        "Welcome mail",
+        "This email is from the Appraisal Tracker"
+      );
+
+      // Response
+      res.status(200).json({
+        message: "Signup successful with profile image",
+        data: signupUser,
+      });
+    } catch (error) {
+      console.error("Signup Error:", error);
+      res.status(500).json({
+        message: "Error during signup",
+        data: error,
+      });
     }
+  });
+};
 
-  })
-}
+
+
+
+
+
+
+
+
+
+
+
+
 
 const getAllUser = async (req, res) => {
   const allUser = await userModel.find().populate("roleId departmentId");
@@ -168,23 +222,22 @@ const forgotPassword = async (req, res) => {
   }
 };
 
+const resetpassword = async (req, res) => {
+  const token = req.body.token;
+  const password = req.body.password;
 
-const resetpassword = async (req,res)=>{
-  const token = req.body.token
-  const password = req.body.password
-
-  const userfromtoken = jwt.verify(token,secret);
+  const userfromtoken = jwt.verify(token, secret);
 
   const salt = bcrypt.genSaltSync(10);
-  const hashedPassword = bcrypt.hashSync(password,salt)
+  const hashedPassword = bcrypt.hashSync(password, salt);
 
-  const updatePassword = await userModel.findByIdAndUpdate(userfromtoken._id,{
-    password:hashedPassword
-  })
+  const updatePassword = await userModel.findByIdAndUpdate(userfromtoken._id, {
+    password: hashedPassword,
+  });
   res.json({
-    message:"password updated successfully"
-  })
-}
+    message: "password updated successfully",
+  });
+};
 module.exports = {
   signUp,
   login,
@@ -194,5 +247,6 @@ module.exports = {
   deleteUser,
   getUserByRole,
   forgotPassword,
-  resetpassword
+  resetpassword,
+  // addProfileImage,
 };

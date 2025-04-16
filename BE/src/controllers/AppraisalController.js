@@ -22,7 +22,7 @@ const getAllAppraisal = async (req, res) => {
 };
 
 const getAppraisalById = async (req,res)=>{
-  const appraisalById = await appraisalController.find({userId:req.params.userId})
+  const appraisalById = await appraisalController.find({userId:req.params.id})
   res.json({
     message:"appraisal found successfully",
     data:appraisalById

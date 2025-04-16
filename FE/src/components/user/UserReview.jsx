@@ -9,7 +9,9 @@ const UserReview = () => {
     reset,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    mode: "all",
+  });
 
   const reviewerId = localStorage.getItem("id");
   const selectedEmployee = watch("employeeId");
@@ -39,6 +41,7 @@ const UserReview = () => {
   // Fetch appraisals by employee
   const fetchAppraisalsForEmployee = async (empId) => {
     try {
+      console.log(empId);
       const res = await axios.get(`/appraisal/${empId}`);
       setEmployeeAppraisals(res.data.data);
     } catch (err) {

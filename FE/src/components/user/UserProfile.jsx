@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Loader from "../common/Loader";
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -18,9 +19,16 @@ const UserProfile = () => {
     fetchProfile();
   }, []);
 
-  if (!user) return <div className="text-center mt-20 text-gray-500">Loading...</div>;
+  if (!user)
+    return (
+      <div className="text-center mt-20 text-gray-500">
+        <Loader />
+      </div>
+    );
 
-  const initials = `${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`.toUpperCase();
+  const initials = `${user.firstName?.[0] || ""}${
+    user.lastName?.[0] || ""
+  }`.toUpperCase();
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100 px-4">
@@ -30,15 +38,21 @@ const UserProfile = () => {
 
         {/* Avatar */}
         <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 rounded-full bg-purple-600 text-white flex items-center justify-center text-2xl font-bold shadow-md">
-            {initials}
-          </div>
+          { user.imageUrl ? 
+            <img
+              src={user.imageUrl}
+              className="w-20 h-20 rounded-full text-white flex items-center justify-center text-2xl font-bold shadow-md"
+            />  
+            : <div className="w-20 h-20 rounded-full bg-purple-500 text-white flex items-center justify-center text-2xl font-bold shadow-md">{initials}</div>
+          }
         </div>
 
         {/* Info */}
         <div className="grid grid-cols-2 gap-3 text-sm">
           <p className="font-semibold">Full Name:</p>
-          <p>{user.firstName} {user.lastName}</p>
+          <p>
+            {user.firstName} {user.lastName}
+          </p>
 
           <p className="font-semibold">Email:</p>
           <p>{user.email}</p>
@@ -53,10 +67,8 @@ const UserProfile = () => {
           <p>{user.roleId.name}</p>
 
           <p className="font-semibold">Joining Date:</p>
-          <p>{new Date(user.dateOfJoining).toLocaleDateString('en-GB')}</p>
+          <p>{new Date(user.dateOfJoining).toLocaleDateString("en-GB")}</p>
         </div>
-
-       
       </div>
     </div>
   );

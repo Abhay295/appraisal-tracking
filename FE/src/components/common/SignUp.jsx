@@ -5,17 +5,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import Loader from "./Loader";
 
-
 const SignUp = () => {
   const [roles, setRoles] = useState([]);
   const [departments, setDepartments] = useState([]);
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null); // 🆕 Image preview state
 
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue, // 🆕 To set image manually
   } = useForm();
 
   const getroles = async () => {
@@ -29,150 +30,100 @@ const SignUp = () => {
   };
 
   useEffect(() => {
-    getroles(), getDepartment();
+    getroles();
+    getDepartment();
   }, []);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImagePreview(URL.createObjectURL(file)); // 🆕 Show image preview
+      setValue("image", [file]); // 🆕 Set image in form manually
+    }
+  };
+
   const submitHandler = async (data) => {
-    
-    
+    const formData = new FormData();
+    formData.append("firstName", data.firstName);
+    formData.append("lastName", data.lastName);
+    formData.append("email", data.email);
+    formData.append("password", data.password);
+    formData.append("gender", data.gender);
+    formData.append("contactNum", data.contactNum);
+    formData.append("roleId", data.roleId);
+    formData.append("dateOfJoining", data.dateOfJoining);
+    formData.append("image", data.image[0]);
+    formData.append("departmentId", data.departmentId);
     try {
-      setIsLoading(true)
-      const res = await axios.post("/signup", data);
-      console.log(res.data.data);
+      setIsLoading(true);
+      const res = await axios.post("/signup", formData);
       if (res.status === 200) {
         toast("✅ Signup successfully", {
           position: "top-right",
           autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
           theme: "light",
           transition: Bounce,
         });
       }
 
-      setTimeout(()=>{
+      setTimeout(() => {
         navigate("/login");
-      },2000)
-
+      }, 2000);
     } catch (err) {
-      setIsLoading(false)
-      if(err){
-        toast("⚠️ Something went wrong...", {
-          position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-      }
+      setIsLoading(false);
+      toast("⚠️ Something went wrong...", {
+        position: "top-right",
+        autoClose: 1500,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 
-  const validationSchema = {
-    firstnameValidator: {
-      required: {
-        value: true,
-        message: "firstname is required*",
-      },
-    },
-    lastnameValidator: {
-      required: {
-        value: true,
-        message: "lastname is required*",
-      },
-    },
-    emailValidator: {
-      required: {
-        value: true,
-        message: "email is required*",
-      },
-      pattern: {
-        value: /[A-Za-z0-9]+@+[A-Za-z0-9]+\.+[A-Za-z]/,
-        message: "Enter valid email*",
-      },
-    },
-    departmentValidator: {
-      required: {
-        value: true,
-        message: "This field is required*",
-      },
-    },
-    passwordValidator: {
-      required: {
-        value: true,
-        message: "password must be required*",
-      },
-      min: {
-        value: 8,
-      },
-      pattern: {
-        value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
-      },
-    },
-    contactValidator: {
-      required: {
-        value: true,
-        message: "contact number is required*",
-      },
-      minLength: {
-        value: 10,
-        message: "enter correct number",
-      },
-      maxLength: {
-        value: 10,
-        message: "Maximum 10 numbers allowed",
-      },
-    },
-    commonValidator: {
-      required: {
-        value: true,
-        message: "This field is required*",
-      },
-    },
-    termValidation: {
-      validate: (value) => {
-        return value == true || "Accept the T&C*";
-      },
-    },
-  };
   return (
-    
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-gray-100 to-purple-100">
-          {/* Toast Notification */}
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            closeOnClick
-            pauseOnHover
-            draggable
-            theme="light"
-            transition={Bounce}
-          />
-  
-          {isLoading ? <Loader/> : 
-          
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-gray-100 to-purple-100">
+      <ToastContainer />
+
+      {isLoading ? (
+        <Loader />
+      ) : (
         <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
           <h2 className="text-3xl font-extrabold text-center text-purple-700 mb-6">
             Employee Sign Up
           </h2>
-  
+
           {/* Form */}
           <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
-            {/* Name Inputs */}
+            {/* Profile Image Upload with Preview */}
+            <div className="flex justify-center">
+              <label className="relative cursor-pointer">
+                <img
+                  src={imagePreview || "https://via.placeholder.com/100"}
+                  className="w-28 h-28 object-cover rounded-full border-2 border-purple-500"
+                  alt="Profile"
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange} // 🆕 Custom handler
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                />
+              </label>
+            </div>
+            {errors.image && (
+              <p className="text-red-500 text-sm text-center">
+                {errors.image.message}
+              </p>
+            )}
+
+            {/* First and Last Name */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* First Name */}
               <div className="flex flex-col">
                 <label className="text-gray-700 font-medium">First Name</label>
                 <input
-                  {...register("firstName", { required: "First Name is required" })}
+                  {...register("firstName", {
+                    required: "First Name is required",
+                  })}
                   type="text"
                   className={`p-3 border rounded-lg ${
                     errors.firstName
@@ -182,15 +133,18 @@ const SignUp = () => {
                   placeholder="John"
                 />
                 {errors.firstName && (
-                  <p className="text-red-500 text-sm">{errors.firstName.message}</p>
+                  <p className="text-red-500 text-sm">
+                    {errors.firstName.message}
+                  </p>
                 )}
               </div>
-  
-              {/* Last Name */}
+
               <div className="flex flex-col">
                 <label className="text-gray-700 font-medium">Last Name</label>
                 <input
-                  {...register("lastName", { required: "Last Name is required" })}
+                  {...register("lastName", {
+                    required: "Last Name is required",
+                  })}
                   type="text"
                   className={`p-3 border rounded-lg ${
                     errors.lastName
@@ -200,11 +154,13 @@ const SignUp = () => {
                   placeholder="Doe"
                 />
                 {errors.lastName && (
-                  <p className="text-red-500 text-sm">{errors.lastName.message}</p>
+                  <p className="text-red-500 text-sm">
+                    {errors.lastName.message}
+                  </p>
                 )}
               </div>
             </div>
-  
+
             {/* Email */}
             <div className="flex flex-col">
               <label className="text-gray-700 font-medium">Email</label>
@@ -228,7 +184,7 @@ const SignUp = () => {
                 <p className="text-red-500 text-sm">{errors.email.message}</p>
               )}
             </div>
-  
+
             {/* Password */}
             <div className="flex flex-col">
               <label className="text-gray-700 font-medium">Password</label>
@@ -249,13 +205,14 @@ const SignUp = () => {
                 placeholder="********"
               />
               {errors.password && (
-                <p className="text-red-500 text-sm">{errors.password.message}</p>
+                <p className="text-red-500 text-sm">
+                  {errors.password.message}
+                </p>
               )}
             </div>
-  
-            {/* Gender & Contact Number */}
+
+            {/* Gender and Contact Number */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Gender */}
               <div className="flex flex-col">
                 <label className="text-gray-700 font-medium">Gender</label>
                 <select
@@ -268,19 +225,22 @@ const SignUp = () => {
                   <option value="other">Other</option>
                 </select>
                 {errors.gender && (
-                  <p className="text-red-500 text-sm">{errors.gender.message}</p>
+                  <p className="text-red-500 text-sm">
+                    {errors.gender.message}
+                  </p>
                 )}
               </div>
-  
-              {/* Contact Number */}
+
               <div className="flex flex-col">
-                <label className="text-gray-700 font-medium">Contact Number</label>
+                <label className="text-gray-700 font-medium">
+                  Contact Number
+                </label>
                 <input
                   {...register("contactNum", {
                     required: "Contact Number is required",
                     pattern: {
-                      value: /^[0-9]+$/,
-                      message: "Only numbers allowed",
+                      value: /^[0-9]{10}$/,
+                      message: "Enter a valid 10-digit number",
                     },
                   })}
                   type="text"
@@ -288,11 +248,13 @@ const SignUp = () => {
                   placeholder="1234567890"
                 />
                 {errors.contactNum && (
-                  <p className="text-red-500 text-sm">{errors.contactNum.message}</p>
+                  <p className="text-red-500 text-sm">
+                    {errors.contactNum.message}
+                  </p>
                 )}
               </div>
             </div>
-  
+
             {/* Role */}
             <div className="flex flex-col">
               <label className="text-gray-700 font-medium">Role</label>
@@ -311,10 +273,12 @@ const SignUp = () => {
                 <p className="text-red-500 text-sm">{errors.roleId.message}</p>
               )}
             </div>
-  
+
             {/* Date of Joining */}
             <div className="flex flex-col">
-              <label className="text-gray-700 font-medium">Date of Joining</label>
+              <label className="text-gray-700 font-medium">
+                Date of Joining
+              </label>
               <input
                 {...register("dateOfJoining", {
                   required: "Date of Joining is required",
@@ -328,7 +292,7 @@ const SignUp = () => {
                 </p>
               )}
             </div>
-  
+
             {/* Department */}
             <div className="flex flex-col">
               <label className="text-gray-700 font-medium">Department</label>
@@ -351,7 +315,7 @@ const SignUp = () => {
                 </p>
               )}
             </div>
-  
+
             {/* Submit Button */}
             <button
               type="submit"
@@ -359,8 +323,7 @@ const SignUp = () => {
             >
               Sign Up
             </button>
-  
-            {/* Already Have an Account? */}
+
             <p className="text-center text-gray-600 mt-4">
               Already have an account?{" "}
               <Link
@@ -371,14 +334,10 @@ const SignUp = () => {
               </Link>
             </p>
           </form>
-        
         </div>
-          }
-      </div>
-  
-    
-    
-  )
+      )}
+    </div>
+  );
 };
 
 export default SignUp;

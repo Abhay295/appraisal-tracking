@@ -42,7 +42,7 @@ const ViewGoals = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#e0c3fc] to-[#8ec5fc] p-10">
+    <div className="min-h-screen bg-gray-100   p-10">
       <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-10 drop-shadow-md">
         🚀 My Goals
       </h1>
